@@ -3,23 +3,40 @@
 using namespace std;
 using vi = vector<int>;
 
-int lis(vi& v) {
-  int ans{0};
+vi lis(vi& v) {
+  if (v.size() == 0) return {};
+
+  int index{0};
   vi maxs(v.size(), 1);
+  vi prev(v.size(), -1);
 
   fore(i, 0, v.size()) {
     fore(j, 0, i) {
-      if (v[j] < v[i]) maxs[i] = max(maxs[i], maxs[j] + 1);
+      if (v[j] >= v[i] || maxs[j] < maxs[i]) continue;
+      maxs[i] = maxs[j] + 1;
+      prev[i] = j;
     }
-    ans = max(ans, maxs[i]);
+    if (maxs[i] <= maxs[index]) continue;
+    index = i;
   }
+
+  vi ans{};
+  while (index != -1) {
+    ans.push_back(v[index]);
+    index = prev[index];
+  }
+  reverse(ans.begin(), ans.end());
 
   return ans;
 }
 
 int main() {
   vi nums{6, 2, 5, 1, 7, 4, 8, 3};
-  cout << lis(nums) << '\n';
+  vi ans{lis(nums)};
+  for (int num : ans) {
+    cout << num << ' ';
+  }
+  cout << '\n';
 
   return 0;
 }
